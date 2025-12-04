@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Happy Birthday!</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      background: linear-gradient(to bottom, #9aadff, #fad0c4);
+      overflow: hidden;
+    }
+
+    .container {
+      text-align: center;
+      background: white;
+      padding: 20px;
+      border-radius: 15px;
+      box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+      max-width: 600px;
+      width: 90%;
+    }
+
+    h1 {
+      color: #6b61ff;
+      margin-bottom: 20px;
+    }
+
+    .images {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+      gap: 10px;
+      margin: 20px 0;
+    }
+
+    .images img {
+      width: 100%;
+      height: auto;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    }
+
+    input[type="file"] {
+      margin: 10px 0;
+    }
+
+    canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+    }
+  </style>
+</head>
+
+<body>
+  <canvas id="birthdayAnimation"></canvas>
+  <div class="container">
+    <h1>วันนี้วันเกิดอัสไง</h1>
+    <h1> Birthday!</h1>
+    <p>ขอให้มีความสุขมากๆนะครับ</p>
+    <tr>
+      <td>
+        <img src="Image_HBD\meme-cat-cat-meme.gif" width="150px" height="150px">
+      </td>
+    </tr>
+  </div>
+  <script>
+    // Birthday Animation
+    const canvas = document.getElementById('birthdayAnimation');
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    let balloons = [];
+
+    class Balloon {
+      constructor(x, y, color) {
+        this.x = x;
+        this.y = y;
+        this.color = color;
+        this.radius = Math.random() * 20 + 10;
+        this.speed = Math.random() * 2 + 1;
+      }
+
+      update() {
+        this.y -= this.speed;
+        if (this.y + this.radius < 0) {
+          this.y = canvas.height + this.radius;
+          this.x = Math.random() * canvas.width;
+        }
+      }
+
+      draw() {
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+        ctx.fillStyle = this.color;
+        ctx.fill();
+        ctx.closePath();
+      }
+    }
+
+    function createBalloons() {
+      for (let i = 0; i < 50; i++) {
+        const x = Math.random() * canvas.width;
+        const y = Math.random() * canvas.height;
+        const color = `hsl(${Math.random() * 360}, 100%, 50%)`;
+        balloons.push(new Balloon(x, y, color));
+      }
+    }
+
+    function animateBalloons() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      balloons.forEach(balloon => {
+        balloon.update();
+        balloon.draw();
+      });
+      requestAnimationFrame(animateBalloons);
+    }
+
+    createBalloons();
+    animateBalloons();
+
+    // Image Upload
+    const fileInput = document.getElementById('fileInput');
+    const imageGallery = document.getElementById('imageGallery');
+
+    fileInput.addEventListener('change', (event) => {
+      const files = Array.from(event.target.files).slice(0, 5); // Limit to 5 images
+      imageGallery.innerHTML = '';
+
+      files.forEach(file => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const img = document.createElement('img');
+          img.src = e.target.result;
+          imageGallery.appendChild(img);
+        };
+        reader.readAsDataURL(file);
+      });
+    });
+  </script>
+</body>
